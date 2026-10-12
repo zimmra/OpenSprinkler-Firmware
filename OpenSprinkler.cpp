@@ -28,6 +28,9 @@
 #include "api/server.h"
 #include "platform/gpio.h"
 #include "boards/hardware_detection.h"
+#if defined(OSPI_KS0212)
+#include "boards/ks0212.h"
+#endif
 #ifdef __has_include
 	#if __has_include("testmode.h")
 		#include "testmode.h"
@@ -830,6 +833,9 @@ void OpenSprinkler::begin() {
 #if defined(OSPI)
 	Bus.begin(); // init I2C for OSPI
 
+#if defined(OSPI_KS0212)
+	ks0212::begin();
+#else
 	// Configure the station shift register before loading the initial all-off state.
 	pinMode(PIN_SR_OE, OUTPUT);
 	digitalWrite(PIN_SR_OE, HIGH); // disable outputs during setup
@@ -843,6 +849,7 @@ void OpenSprinkler::begin() {
 		pin_sr_data = PIN_SR_DATA_ALT; // RPi 1 revision 1 boards
 	}
 	pinMode(pin_sr_data, OUTPUT);
+#endif
 
 	pinModeExt(PIN_BUTTON_1, INPUT_PULLUP);
 	pinModeExt(PIN_BUTTON_2, INPUT_PULLUP);
@@ -862,7 +869,9 @@ void OpenSprinkler::begin() {
 
 #else
 	// pull shift register OE low to enable output
+#if !defined(OSPI_KS0212)
 	digitalWrite(PIN_SR_OE, LOW);
+#endif
 	// Rain sensor port set up
 	pinMode(PIN_SENSOR1, INPUT_PULLUP);
 	pinMode(PIN_SENSOR2, INPUT_PULLUP);
@@ -1256,6 +1265,8 @@ void OpenSprinkler::apply_all_station_bits(void (*post_activation_callback)()) {
 		}
 	}
 
+	#elif defined(OSPI_KS0212)
+		ks0212::write(applied_station_bits[0], status.enabled);
 	#else
 		digitalWrite(PIN_SR_LATCH, LOW);
 	unsigned char bid, s, sbits;
