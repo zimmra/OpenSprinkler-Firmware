@@ -461,7 +461,11 @@ enum {
 	#define PIN_SR_CLOCK      osboard::OSPI_SHIFT_CLOCK_PIN
 	#define PIN_SR_OE         osboard::OSPI_SHIFT_OUTPUT_ENABLE_PIN
 
+	#if defined(OSPI_KS0212)
+	#define PIN_FREE_LIST       {5,7,8,9,11,12,13,16,19,20,21,23,25} // exclude relay outputs
+	#else
 	#define PIN_FREE_LIST       {5,6,7,8,9,11,12,13,16,19,20,21,23,25,26}  // free GPIO pins
+	#endif
 	#define ETHER_BUFFER_SIZE   8192
 	#define ETHER_BUFFER_ALLOC_SIZE   ETHER_BUFFER_SIZE
 
