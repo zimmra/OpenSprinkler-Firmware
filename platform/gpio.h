@@ -32,6 +32,11 @@ unsigned char digitalReadExt(unsigned char pin);
 #define HIGH 1
 #define LOW  0
 
+#if defined(OSPI)
+bool gpio_claim_output_checked(int pin, unsigned char initial);
+bool gpio_write_checked(int pin, unsigned char value);
+#endif
+
 void pinMode(int pin, unsigned char mode);
 void digitalWrite(int pin, unsigned char value);
 int gpio_fd_open(int pin, int mode = O_WRONLY);

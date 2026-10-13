@@ -36,6 +36,14 @@ int init_lgpio() {
 
 } // namespace
 
+bool gpio_claim_output_checked(int pin, unsigned char initial) {
+	return init_lgpio() == 0 && lgGpioClaimOutput(lgpio_handle, 0, pin, initial) >= 0;
+}
+
+bool gpio_write_checked(int pin, unsigned char value) {
+	return lgpio_handle >= 0 && lgGpioWrite(lgpio_handle, pin, value) >= 0;
+}
+
 void pinMode(int pin, unsigned char mode) {
 	if (init_lgpio() != 0) return;
 
